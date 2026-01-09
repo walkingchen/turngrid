@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurnGrid - 多人回合制游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 TurnGrid</h1>
+        <p class="subtitle">多人在线回合制网页游戏</p>
+
+        <!-- 加入游戏界面 -->
+        <div id="join-screen">
+            <div class="join-form">
+                <input type="text" id="nickname-input" placeholder="输入你的昵称" maxlength="20" autocomplete="off">
+                <button id="join-button">加入游戏</button>
+            </div>
+            <div class="instructions">
+                <h3>游戏说明：</h3>
+                <ul>
+                    <li>使用方向键 ↑↓←→ 移动你的角色</li>
+                    <li>收集地图上的宝藏 💎 获得分数</li>
+                    <li>避免与其他玩家碰撞</li>
+                    <li>每次移动有短暂冷却时间</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="game-screen" style="display: none;">
+            <div class="game-info">
+                <div class="player-info">
+                    <span>玩家: <strong id="player-nickname"></strong></span>
+                    <span>分数: <strong id="player-score">0</strong></span>
+                </div>
+                <div class="game-stats">
+                    <span>在线玩家: <strong id="player-count">1</strong></span>
+                    <span>宝藏数: <strong id="treasure-count">0</strong></span>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="game-canvas"></canvas>
+            </div>
+
+            <div class="message" id="message"></div>
+
+            <div class="controls">
+                <p>使用键盘方向键移动 ⬆️⬇️⬅️➡️</p>
+                <button id="leave-button" class="leave-btn">离开游戏</button>
+            </div>
+
+            <!-- 排行榜 -->
+            <div class="leaderboard">
+                <h3>🏆 排行榜</h3>
+                <div id="leaderboard-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[Unit]
+Description=TurnGrid Multiplayer Game Server
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/turngrid
+Environment="PATH=/home/pi/turngrid/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/home/pi/turngrid/venv/bin/python3 server.py
+
+# 自动重启配置
+Restart=on-failure
+RestartSec=5s
+
+# 日志配置
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=turngrid
+
+[Install]
+WantedBy=multi-user.target

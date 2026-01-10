@@ -15,6 +15,8 @@ const GameClient = {
     updateInterval: null,     // 轮询定时器
     lastMoveTime: 0,          // 上次移动时间（用于显示冷却）
     moveCooldown: 300,        // 移动冷却时间（毫秒）
+    longPressInterval: null,  // 长按定时器
+    longPressDelay: 150,      // 长按重复间隔（毫秒）
 
     // 颜色配置
     colors: {
@@ -64,21 +66,52 @@ const GameClient = {
         dpadButtons.forEach(button => {
             const direction = button.getAttribute('data-direction');
 
-            // 使用 touchstart 而不是 click，响应更快
+            // 触摸开始 - 立即移动一次，然后开始长按
             button.addEventListener('touchstart', (e) => {
                 e.preventDefault(); // 防止触发点击事件和其他默认行为
+
+                // 立即执行一次移动
                 this.move(direction);
+
+                // 清除之前的长按定时器（如果有）
+                if (this.longPressInterval) {
+                    clearInterval(this.longPressInterval);
+                }
+
+                // 启动长按定时器，持续移动
+                this.longPressInterval = setInterval(() => {
+                    this.move(direction);
+                }, this.longPressDelay);
+            });
+
+            // 触摸结束 - 停止长按
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.stopLongPress();
+            });
+
+            // 触摸取消 - 停止长按（手指移出按钮区域）
+            button.addEventListener('touchcancel', (e) => {
+                e.preventDefault();
+                this.stopLongPress();
             });
 
             // 也保留 click 事件作为备选（某些设备可能需要）
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.move(direction);
             });
         });
 
         // 显示虚拟控制器
         virtualControls.style.display = 'block';
+    },
+
+    // 停止长按
+    stopLongPress() {
+        if (this.longPressInterval) {
+            clearInterval(this.longPressInterval);
+            this.longPressInterval = null;
+        }
     },
 
     // 加入游戏
@@ -134,6 +167,9 @@ const GameClient = {
             clearInterval(this.updateInterval);
             this.updateInterval = null;
         }
+
+        // 停止长按
+        this.stopLongPress();
 
         // 重置状态
         this.playerId = null;

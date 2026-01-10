@@ -80,6 +80,9 @@ class GameState:
             # 限制昵称长度
             nickname = nickname[:config.MAX_NICKNAME_LENGTH]
 
+            # 检查昵称是否重复，如果重复则添加编号
+            nickname = self._make_unique_nickname(nickname)
+
             # 创建新玩家
             current_time = time.time()
             self.players[player_id] = {
@@ -93,6 +96,29 @@ class GameState:
 
             self._increment_revision()
             return self.players[player_id]
+
+    def _make_unique_nickname(self, nickname: str) -> str:
+        """
+        确保昵称唯一，如果重复则添加编号
+        例如：如果"玩家"已存在，则返回"玩家(2)"
+        """
+        # 获取所有现有昵称
+        existing_nicknames = {p['nickname'] for p in self.players.values()}
+
+        # 如果昵称不重复，直接返回
+        if nickname not in existing_nicknames:
+            return nickname
+
+        # 如果重复，尝试添加编号
+        counter = 2
+        while True:
+            new_nickname = f"{nickname}({counter})"
+            if new_nickname not in existing_nicknames:
+                return new_nickname
+            counter += 1
+            # 防止无限循环（理论上不会发生）
+            if counter > 1000:
+                return f"{nickname}({int(time.time())})"
 
     def move_player(self, player_id: str, direction: str) -> dict:
         """

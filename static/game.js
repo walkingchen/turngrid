@@ -38,6 +38,47 @@ const GameClient = {
 
         // 绑定键盘事件
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+
+        // 初始化虚拟控制器（触摸设备）
+        this.initVirtualControls();
+    },
+
+    // 检测是否为触摸设备
+    isTouchDevice() {
+        return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints > 0));
+    },
+
+    // 初始化虚拟控制器
+    initVirtualControls() {
+        // 只在触摸设备上显示虚拟控制器
+        if (!this.isTouchDevice()) {
+            return;
+        }
+
+        const virtualControls = document.getElementById('virtual-controls');
+        const dpadButtons = virtualControls.querySelectorAll('.dpad-btn');
+
+        // 为每个方向按钮绑定触摸事件
+        dpadButtons.forEach(button => {
+            const direction = button.getAttribute('data-direction');
+
+            // 使用 touchstart 而不是 click，响应更快
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // 防止触发点击事件和其他默认行为
+                this.move(direction);
+            });
+
+            // 也保留 click 事件作为备选（某些设备可能需要）
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.move(direction);
+            });
+        });
+
+        // 显示虚拟控制器
+        virtualControls.style.display = 'block';
     },
 
     // 加入游戏

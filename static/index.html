@@ -20,10 +20,11 @@
             <div class="instructions">
                 <h3>游戏说明：</h3>
                 <ul>
-                    <li>使用方向键 ↑↓←→ 移动你的角色</li>
+                    <li>使用方向键 ↑↓←→ 或触摸屏幕按钮移动</li>
                     <li>收集地图上的宝藏 💎 获得分数</li>
                     <li>避免与其他玩家碰撞</li>
                     <li>每次移动有短暂冷却时间</li>
+                    <li>支持电脑、平板、手机等多种设备</li>
                 </ul>
             </div>
         </div>
@@ -45,10 +46,37 @@
                 <canvas id="game-canvas"></canvas>
             </div>
 
+            <!-- 虚拟方向键控制器（仅在触摸设备上显示） -->
+            <div id="virtual-controls" class="virtual-controls" style="display: none;">
+                <div class="dpad">
+                    <button class="dpad-btn dpad-up" data-direction="up">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+                        </svg>
+                    </button>
+                    <button class="dpad-btn dpad-down" data-direction="down">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+                        </svg>
+                    </button>
+                    <button class="dpad-btn dpad-left" data-direction="left">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+                        </svg>
+                    </button>
+                    <button class="dpad-btn dpad-right" data-direction="right">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+                        </svg>
+                    </button>
+                    <div class="dpad-center"></div>
+                </div>
+            </div>
+
             <div class="message" id="message"></div>
 
             <div class="controls">
-                <p>使用键盘方向键移动 ⬆️⬇️⬅️➡️</p>
+                <p id="control-hint">使用键盘方向键或屏幕按钮移动 ⬆️⬇️⬅️➡️</p>
                 <button id="leave-button" class="leave-btn">离开游戏</button>
             </div>
 

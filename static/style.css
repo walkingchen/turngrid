@@ -14,6 +14,10 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    /* 禁止双击缩放 */
+    touch-action: pan-x pan-y;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .container {
@@ -21,8 +25,11 @@ body {
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-    max-width: 900px;
+    max-width: 1200px;
     width: 100%;
+    /* 允许文本选择 */
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 h1 {
@@ -124,6 +131,14 @@ button:active {
     border-radius: 10px;
 }
 
+/* 游戏主区域：排行榜 + 地图并排布局 */
+.game-main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+}
+
 .player-info, .game-stats {
     display: flex;
     gap: 20px;
@@ -181,10 +196,13 @@ button:active {
 
 /* 排行榜 */
 .leaderboard {
-    margin-top: 30px;
     padding: 20px;
     background: #f8f9fa;
     border-radius: 10px;
+    max-height: 600px;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
 }
 
 .leaderboard h3 {
@@ -336,6 +354,17 @@ button:active {
     .player-info, .game-stats {
         flex-direction: column;
         gap: 5px;
+    }
+
+    /* 小屏幕改为垂直布局 */
+    .game-main {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .leaderboard {
+        max-height: 300px;
+        position: static;
     }
 
     /* 在小屏幕上调整虚拟控制器大小和位置 */

@@ -121,6 +121,131 @@ button:active {
     margin-right: 5px;
 }
 
+/* 游戏控制面板 */
+.game-control-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    color: white;
+}
+
+.game-timer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.timer-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+}
+
+.timer-label {
+    font-weight: 500;
+}
+
+.timer-value {
+    font-family: 'Courier New', monospace;
+    font-size: 28px;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.game-status-badge {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.game-status-badge.waiting {
+    background: rgba(255, 193, 7, 0.3);
+}
+
+.game-status-badge.playing {
+    background: rgba(76, 175, 80, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.game-status-badge.ended {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.game-control-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.duration-select {
+    padding: 10px 15px;
+    font-size: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.duration-select:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.duration-select option {
+    background: #667eea;
+    color: white;
+}
+
+.start-game-btn {
+    padding: 10px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.start-game-btn:active {
+    transform: translateY(0);
+}
+
+.start-game-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* 游戏界面 */
 .game-info {
     display: flex;
@@ -344,6 +469,36 @@ button:active {
 
     button {
         width: 100%;
+    }
+
+    /* 游戏控制面板响应式 */
+    .game-control-panel {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .game-timer {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .timer-display {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .game-control-actions {
+        width: 100%;
+    }
+
+    .duration-select {
+        flex: 1;
+    }
+
+    .start-game-btn {
+        flex: 1;
     }
 
     .game-info {

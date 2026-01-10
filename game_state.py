@@ -32,6 +32,15 @@ class GameState:
         # 宝藏位置列表：[(x, y), (x, y), ...]
         self.treasures: List[Tuple[int, int]] = []
 
+        # 游戏状态：'waiting' | 'playing' | 'ended'
+        self.game_status = 'waiting'
+
+        # 游戏时长（秒）
+        self.game_duration = 300  # 默认5分钟
+
+        # 游戏开始时间
+        self.game_start_time = None
+
         # 初始化游戏地图
         self._init_game()
 
@@ -127,6 +136,16 @@ class GameState:
         返回 {'success': bool, 'message': str, 'player': dict}
         """
         with self.lock:
+            # 检查游戏状态
+            if self.game_status != 'playing':
+                return {'success': False, 'message': 'Game is not running'}
+
+            # 检查游戏是否已结束
+            if self._is_game_ended():
+                self.game_status = 'ended'
+                self._increment_revision()
+                return {'success': False, 'message': 'Game time is up'}
+
             # 检查玩家是否存在
             if player_id not in self.players:
                 return {'success': False, 'message': 'Player not found'}
@@ -226,17 +245,72 @@ class GameState:
 
             return len(inactive)
 
+    def start_game(self, duration_minutes: int = 5) -> dict:
+        """
+        开始游戏
+        duration_minutes: 游戏时长（分钟）
+        """
+        with self.lock:
+            # 重置所有玩家分数
+            for player in self.players.values():
+                player['score'] = 0
+
+            # 设置游戏状态
+            self.game_status = 'playing'
+            self.game_duration = duration_minutes * 60  # 转换为秒
+            self.game_start_time = time.time()
+
+            self._increment_revision()
+
+            return {
+                'success': True,
+                'message': f'Game started for {duration_minutes} minutes',
+                'game_status': self.game_status,
+                'duration': self.game_duration
+            }
+
+    def _is_game_ended(self) -> bool:
+        """
+        检查游戏是否已结束
+        """
+        if self.game_status != 'playing':
+            return False
+
+        if self.game_start_time is None:
+            return False
+
+        elapsed = time.time() - self.game_start_time
+        return elapsed >= self.game_duration
+
+    def get_remaining_time(self) -> int:
+        """
+        获取剩余时间（秒）
+        """
+        if self.game_status != 'playing' or self.game_start_time is None:
+            return 0
+
+        elapsed = time.time() - self.game_start_time
+        remaining = max(0, self.game_duration - elapsed)
+        return int(remaining)
+
     def get_world_state(self) -> dict:
         """
         获取完整的世界状态（供客户端渲染）
         """
         with self.lock:
+            # 自动检查游戏是否结束
+            if self.game_status == 'playing' and self._is_game_ended():
+                self.game_status = 'ended'
+                self._increment_revision()
+
             return {
                 'revision': self.revision,
                 'grid_width': config.GRID_WIDTH,
                 'grid_height': config.GRID_HEIGHT,
                 'players': self.players.copy(),
-                'treasures': self.treasures.copy()
+                'treasures': self.treasures.copy(),
+                'game_status': self.game_status,
+                'remaining_time': self.get_remaining_time()
             }
 
     def reset(self):

@@ -31,6 +31,28 @@
 
         <!-- 游戏界面 -->
         <div id="game-screen" style="display: none;">
+            <!-- 游戏控制面板 -->
+            <div class="game-control-panel">
+                <div class="game-timer">
+                    <div class="timer-display">
+                        <span class="timer-label">⏱️ 剩余时间:</span>
+                        <span class="timer-value" id="timer-display">--:--</span>
+                    </div>
+                    <div class="game-status-badge" id="game-status-badge">等待开始</div>
+                </div>
+                <div class="game-control-actions">
+                    <select id="game-duration" class="duration-select">
+                        <option value="1">1 分钟</option>
+                        <option value="2">2 分钟</option>
+                        <option value="3">3 分钟</option>
+                        <option value="5" selected>5 分钟</option>
+                        <option value="8">8 分钟</option>
+                        <option value="10">10 分钟</option>
+                    </select>
+                    <button id="start-game-btn" class="start-game-btn">🎮 开始游戏</button>
+                </div>
+            </div>
+
             <div class="game-info">
                 <div class="player-info">
                     <span>玩家: <strong id="player-nickname"></strong></span>

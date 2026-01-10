@@ -105,6 +105,30 @@ def move():
     return jsonify(result)
 
 
+@app.route('/api/game/start', methods=['POST'])
+def start_game():
+    """
+    开始游戏
+    POST JSON: {"duration": 5}  # 游戏时长（分钟），1-10
+    返回: {"success": bool, "message": str}
+    """
+    data = request.get_json()
+
+    if not data or 'duration' not in data:
+        return jsonify({'error': 'Duration required'}), 400
+
+    duration = data['duration']
+
+    # 验证时长范围
+    if not isinstance(duration, int) or duration < 1 or duration > 10:
+        return jsonify({'error': 'Duration must be between 1 and 10 minutes'}), 400
+
+    # 开始游戏
+    result = game.start_game(duration)
+
+    return jsonify(result)
+
+
 @app.route('/api/admin/reset', methods=['POST'])
 def admin_reset():
     """

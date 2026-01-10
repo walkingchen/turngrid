@@ -38,6 +38,9 @@ const GameClient = {
         // 绑定离开按钮
         document.getElementById('leave-button').addEventListener('click', () => this.leaveGame());
 
+        // 绑定开始游戏按钮
+        document.getElementById('start-game-btn').addEventListener('click', () => this.startGame());
+
         // 绑定键盘事件
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
 
@@ -338,11 +341,79 @@ const GameClient = {
         this.ctx.fillText(nickname, centerX, centerY + 12);
     },
 
+    // 开始游戏
+    async startGame() {
+        const duration = parseInt(document.getElementById('game-duration').value);
+
+        try {
+            const response = await fetch('/api/game/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ duration })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                this.showMessage(`游戏已开始！时长：${duration}分钟`, 'success');
+                // 立即更新世界状态
+                this.updateWorld();
+            } else {
+                this.showMessage(data.error || '开始游戏失败', 'error');
+            }
+        } catch (error) {
+            console.error('Start game error:', error);
+            this.showMessage('网络错误', 'error');
+        }
+    },
+
+    // 格式化时间显示（秒 -> MM:SS）
+    formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    },
+
+    // 更新游戏状态UI
+    updateGameStatus(gameStatus, remainingTime) {
+        const statusBadge = document.getElementById('game-status-badge');
+        const timerDisplay = document.getElementById('timer-display');
+        const startBtn = document.getElementById('start-game-btn');
+        const durationSelect = document.getElementById('game-duration');
+
+        // 更新倒计时显示
+        if (gameStatus === 'playing') {
+            timerDisplay.textContent = this.formatTime(remainingTime);
+        } else {
+            timerDisplay.textContent = '--:--';
+        }
+
+        // 更新状态徽章
+        statusBadge.className = 'game-status-badge ' + gameStatus;
+        if (gameStatus === 'waiting') {
+            statusBadge.textContent = '等待开始';
+            startBtn.disabled = false;
+            durationSelect.disabled = false;
+        } else if (gameStatus === 'playing') {
+            statusBadge.textContent = '游戏进行中';
+            startBtn.disabled = true;
+            durationSelect.disabled = true;
+        } else if (gameStatus === 'ended') {
+            statusBadge.textContent = '游戏结束';
+            startBtn.disabled = false;
+            durationSelect.disabled = false;
+            startBtn.textContent = '🔄 重新开始';
+        }
+    },
+
     // 更新 UI
     updateUI() {
         if (!this.worldState) return;
 
-        const { players } = this.worldState;
+        const { players, game_status, remaining_time } = this.worldState;
+
+        // 更新游戏状态和倒计时
+        this.updateGameStatus(game_status, remaining_time);
 
         // 更新当前玩家分数
         if (players[this.playerId]) {
